@@ -37,30 +37,38 @@
 // }) ;
 
 
-
 // api/index.js
+
 import express from "express";
 import cors from "cors";
 import "dotenv/config";
 import * as Sentry from "@sentry/node";
 import serverless from "serverless-http";
+import bodyParser from "body-parser";
 
-import connectDB from "../server/config/db.js"
-import "../server/config/instrument.js"
-import clerkWebHooks from "../server/controllers/webhooks.js"
+import connectDB from "../server/config/db.js";
+import "../server/config/instrument.js";
+import clerkWebHooks from "../server/controllers/webhooks.js";
 
 const app = express();
 
-// Use middleware
+// Enable CORS
 app.use(cors());
-app.use(express.json());
 
-// Set up Sentry
+// Use express.json() for all routes except /webhooks
+app.use((req, res, next) => {
+  if (req.originalUrl === "/api/webhooks") {
+    next(); // Skip JSON parsing for Clerk webhook
+  } else {
+    express.json()(req, res, next);
+  }
+});
+
+// Sentry setup
 Sentry.setupExpressErrorHandler(app);
 
-// Connect to MongoDB inside a safe async block
+// MongoDB connection middleware
 let dbConnected = false;
-
 app.use(async (req, res, next) => {
   if (!dbConnected) {
     try {
@@ -79,11 +87,16 @@ app.get("/", (req, res) => {
   res.send("API working on Vercel");
 });
 
-app.get("/debug-sentry", (req, res) => {
-  throw new Error("Sentry error for testing");
+app.get("/debug-sentry", () => {
+  throw new Error("Sentry test error");
 });
 
-app.post("/webhooks", clerkWebHooks);
+// Use raw body only for webhook verification
+app.post(
+  "/webhooks",
+  bodyParser.raw({ type: "application/json" }),
+  clerkWebHooks
+);
 
-// Export handler
+// Export handler for Vercel
 export const handler = serverless(app);
