@@ -29,7 +29,9 @@ app.get("/debug-sentry", function mainHandler(req, res) {
 });
 
 
-app.post("/webhooks" , clerkWebHooks) ; 
+// app.post("/webhooks" , clerkWebHooks) ; 
+app.post("/webhooks", express.json({ verify: (req, res, buf) => { req.body = JSON.parse(buf.toString()); } }), clerkWebHooks);
+
 
 
 app.listen(PORT, () => {
