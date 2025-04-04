@@ -18,5 +18,5 @@ config folder :- contains the configuration files of the mongodb
 sentry :- for error management of the code 
 
 
-// password mongodb atlas :- 4lYtvLeK9OvjwFPL
+// password mongodb atlas :- 2wKkQX63XyxbMODd
 username :- snehaarora68791
