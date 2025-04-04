@@ -5,6 +5,7 @@ import connectDB from "./config/db.js";
 import * as Sentry from "@sentry/node"
 import "./config/instrument.js"
 import clerkWebHooks from "./controllers/webhooks.js";
+import serverless from "serverless-http";
 
 // initialise express 
 const app = express();  
@@ -31,6 +32,8 @@ app.get("/debug-sentry", function mainHandler(req, res) {
 app.post("/webhooks" , clerkWebHooks) ; 
 
 
-app.listen(PORT, () => {
-    console.log("server is running on port " + PORT);
-}) ;
+// app.listen(PORT, () => {
+//     console.log("server is running on port " + PORT);
+// }) ;
+
+export const handler = serverless(app);
