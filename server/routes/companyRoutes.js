@@ -1,5 +1,5 @@
 import express from "express"
-import { ChangeJobApplicationsStatus, changeVisibility, getCompanyData, getCompanyJobApplicant, getCompanyPostedJobs, loginComapny, postJob, registerCompany } from "../controllers/companyControllers.js";
+import { ChangeJobApplicationsStatus, changeVisibility, getCompanyData, getCompanyJobApplicants, getCompanyPostedJobs, loginCompany, postJob, registerCompany } from "../controllers/companyControllers.js";
 import upload from "../config/multer.js";
 import { protectCompany } from "../middlewares/authMiddleware.js";
 const router = express.Router(); 
@@ -9,7 +9,7 @@ const router = express.Router();
 router.post("/register" ,upload.single("image") , registerCompany); 
 
 // company login 
-router.post("/login" , loginComapny) ; 
+router.post("/login" , loginCompany) ; 
 
 // get company data 
 router.get("/company" , protectCompany,  getCompanyData);
@@ -18,7 +18,7 @@ router.get("/company" , protectCompany,  getCompanyData);
 router.post("/post-job" , protectCompany,  postJob); 
 
 // get applicants 
-router.get("/applicants" ,protectCompany , getCompanyJobApplicant); 
+router.get("/applicants" ,protectCompany , getCompanyJobApplicants); 
 
 // get company job list
 router.get("/list-jobs" , protectCompany , getCompanyPostedJobs);
