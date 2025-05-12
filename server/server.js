@@ -36,7 +36,16 @@ app.get("/debug-sentry", function mainHandler(req, res) {
 
 
 // app.post("/webhooks" , clerkWebHooks) ; 
-app.post("/webhooks", express.json({ verify: (req, res, buf) => { req.body = JSON.parse(buf.toString()); } }), clerkWebHooks);
+// app.post("/webhooks", express.json({ verify: (req, res, buf) => { req.body = JSON.parse(buf.toString()); } }), clerkWebHooks);
+
+import bodyParser from 'body-parser';
+
+// First, use raw body ONLY for /webhooks route
+app.post("/webhooks", bodyParser.raw({ type: 'application/json' }), clerkWebHooks);
+
+// Then all other middleware for normal JSON
+app.use(express.json());
+
 
 app.use("/api/company" , companyRoutes); 
 app.use("/api/jobs" , jobRoutes); 
